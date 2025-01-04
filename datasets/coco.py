@@ -220,33 +220,49 @@ def build(image_set, args):
     root = Path(args.coco_path)
     assert root.exists(), f'provided COCO path {root} does not exist'
     mode = 'instances'
-    
-    if args.ovd:
-        PATHS = {
-            "train": (root / "train2017", root / "annotations" / f'{mode}_train2017_base.json'),
-            "val": (root / "val2017", root / "annotations" / f'{mode}_val2017_basetarget.json'),
-        }
-        if args.label_version == 'RN50x4base':
-            PATHS['train'] = (root / "train2017", root / "annotations" / f'{mode}_train2017_base_RN50x4relabel.json')
-        elif args.label_version == 'RN50x4base_prev':
-            PATHS['train'] = (root / "train2017", root / "annotations" / f'{mode}_train2017_base_RN50x4relabel_pre.json')
-        elif args.label_version == 'RN50x4base_coconames':
-            PATHS['train'] = (root / "train2017", root / "annotations" / f'{mode}_train2017_base_RN50x4relabel_coconames.json')
-        elif args.label_version == 'RN50base':
-            PATHS['train'] = (root / "train2017", root / "annotations" / f'{mode}_train2017_base_RN50relabel.json')
-        elif args.label_version == 'custom':
-            PATHS['val'] = (root / "custom", root / "annotations" / f'custom.json')
-        if args.eval_target:
-            PATHS['val'] = (root / "val2017", root / "annotations" / f'{mode}_val2017_target.json')
-    else:
-        PATHS = {
-            "train": (root / "train2017", root / "annotations" / f'{mode}_train2017.json'),
-            "train_reg": (root / "train2017", root / "annotations" / f'{mode}_train2017.json'),
-            "val": (root / "val2017", root / "annotations" / f'{mode}_val2017.json'),
-            "eval_debug": (root / "val2017", root / "annotations" / f'{mode}_val2017.json'),
-            "test": (root / "test2017", root / "annotations" / 'image_info_test-dev2017.json' ),
-        }
+    PATHS = {
+        "train": (root / "train2017", root / "annotations" / f'{mode}_train2017_base.json'),
+        "val": (root / "val2017", root / "annotations" / f'{mode}_val2017_basetarget.json'),
+    }
 
+    #  # 更换为 Cityscapes 数据集路径
+    PATHS['train'] = (
+        Path(root / "leftImg8bit/train"),
+        Path(root / "annotations/cityscapes_train.json")
+    )
+    PATHS['val'] = (
+        Path(root / "leftImg8bit_foggy/val"),
+        Path(root / "annotations/foggy_cityscapes_val.json")
+    )
+    
+    # if args.ovd:
+    #     PATHS = {
+    #         "train": (root / "train2017", root / "annotations" / f'{mode}_train2017_base.json'),
+    #         "val": (root / "val2017", root / "annotations" / f'{mode}_val2017_basetarget.json'),
+    #     }
+    #     if args.label_version == 'RN50x4base':
+    #         PATHS['train'] = (root / "train2017", root / "annotations" / f'{mode}_train2017_base_RN50x4relabel.json')
+    #     elif args.label_version == 'RN50x4base_prev':
+    #         PATHS['train'] = (root / "train2017", root / "annotations" / f'{mode}_train2017_base_RN50x4relabel_pre.json')
+    #     elif args.label_version == 'RN50x4base_coconames':
+    #         PATHS['train'] = (root / "train2017", root / "annotations" / f'{mode}_train2017_base_RN50x4relabel_coconames.json')
+    #     elif args.label_version == 'RN50base':
+    #         PATHS['train'] = (root / "train2017", root / "annotations" / f'{mode}_train2017_base_RN50relabel.json')
+    #         # 更换cityspace数据集
+           
+    #     elif args.label_version == 'custom':
+    #         PATHS['val'] = (root / "custom", root / "annotations" / f'custom.json')
+    #     if args.eval_target:
+    #         PATHS['val'] = (root / "val2017", root / "annotations" / f'{mode}_val2017_target.json')
+    # else:
+    #     PATHS = {
+    #         "train": (root / "train2017", root / "annotations" / f'{mode}_train2017.json'),
+    #         "train_reg": (root / "train2017", root / "annotations" / f'{mode}_train2017.json'),
+    #         "val": (root / "val2017", root / "annotations" / f'{mode}_val2017.json'),
+    #         "eval_debug": (root / "val2017", root / "annotations" / f'{mode}_val2017.json'),
+    #         "test": (root / "test2017", root / "annotations" / 'image_info_test-dev2017.json' ),
+    #     }
+    # print(f'-----------PATHS:{PATHS}')
     img_folder, ann_file = PATHS[image_set]
     if hasattr(args, 'cls_annotation_path'):
         transforms = make_coco_transforms("val", args)
