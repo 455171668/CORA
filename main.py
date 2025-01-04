@@ -21,6 +21,13 @@ from datasets import build_dataset, get_coco_api_from_dataset, DistributedWeight
 from engine import evaluate, train_one_epoch, lvis_evaluate
 from models import build_model
 from timm.utils import get_state_dict
+import yaml
+
+
+def load_config(config_path):
+    with open(config_path, 'r') as file:
+        config = yaml.safe_load(file)
+    return config
 
 def get_args_parser():
     parser = argparse.ArgumentParser('CORA: Adapting CLIP for Open-Vocabulary Detection with Region Prompting and Anchor Pre-Matching', add_help=False)
@@ -169,6 +176,11 @@ def get_args_parser():
     # distributed training parameters
     parser.add_argument('--world_size', default=1, type=int, help='number of distributed processes')
     parser.add_argument('--dist_url', default='env://', help='url used to set up distributed training')
+    parser.add_argument('--local_rank', type=int, default=0)
+
+
+    # 添加参数来接收配置文件路径
+    parser.add_argument('--config', type=str, required=True, help='Path to the configuration file (YAML)')
 
     return parser
 
@@ -442,8 +454,16 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser("CORA", parents=[get_args_parser()])
     args = parser.parse_args()
+    
     if args.no_model_ema:
         args.model_ema = False
     if args.output_dir:
         Path(args.output_dir).mkdir(parents=True, exist_ok=True)
+    # 加载配置文件
+    config = load_config(args.config)
+
+    # 将配置文件中的参数合并到 args 中
+    for key, value in config.items():
+        if hasattr(args, key):
+            setattr(args, key, value)
     main(args)

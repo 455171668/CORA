@@ -5,14 +5,14 @@ args=" \
 --coco_path datasets/cityscapes \
 --output_dir $work_dir \
 --lr 0.00005 \
---batch_size 4 \
+--batch_size 1 \
 --epochs 35 \
 --lr_drop 35 \
 --backbone clip_RN50 \
 --text_len 15 \
 --ovd \
 --region_prompt_path logs/region_prompt_R50.pth \
---save_every_epoch 5 \
+--save_every_epoch 1 \
 --dim_feedforward 1024 \
 --use_nms \
 --num_queries 300 \

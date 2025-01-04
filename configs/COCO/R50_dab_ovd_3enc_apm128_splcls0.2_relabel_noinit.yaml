@@ -1,0 +1,29 @@
+# config.yaml
+
+coco_path: "datasets/cityscapes"
+output_dir: "output_directory"  # 设置输出目录
+lr: 0.0001
+batch_size: 1
+epochs: 35
+lr_drop: 35
+backbone: "clip_RN50"
+text_len: 15
+ovd: true
+region_prompt_path: "logs/region_prompt_R50.pth"
+save_every_epoch: 1
+dim_feedforward: 1024
+use_nms: true
+num_queries: 300
+anchor_pre_matching: true
+remove_misclassified: true
+condition_on_text: true
+enc_layers: 3
+text_dim: 1024
+condition_bottleneck: 128
+split_class_p: 0.2
+model_ema: true
+model_ema_decay: 0.99996
+save_best: true
+label_version: "RN50base"
+disable_init: true
+target_class_factor: 8
